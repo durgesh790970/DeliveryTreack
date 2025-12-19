@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Details - TiffinRush</title>
+  {% load static %}
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+    
+    /* Header */
+    .detail-header { 
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #4caf50 100%);
+      padding: 20px; 
+      box-shadow: 0 8px 32px rgba(255,107,53,0.3); 
+      border-radius: 0 0 30px 30px; 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .detail-header::before { 
+      content: ''; 
+      position: absolute; 
+      top: -50%; 
+      right: -10%; 
+      width: 200px; 
+      height: 200px; 
+      background: rgba(255,255,255,0.1); 
+      border-radius: 50%; 
+      animation: headerFloat 8s ease-in-out infinite;
+    }
+    
+    @keyframes headerFloat { 
+      0%, 100% { transform: translateY(0px) rotate(0deg); } 
+      50% { transform: translateY(-20px) rotate(180deg); } 
+    }
+    
+    .header-content { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2; }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .back-btn { 
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%; 
+      width: 45px; 
+      height: 45px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 20px; 
+      color: white;
+      cursor: pointer; 
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
+    .page-title { font-size: 22px; font-weight: 700; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .header-actions { display: flex; gap: 10px; }
+    .header-btn { 
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%; 
+      width: 45px; 
+      height: 45px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 18px; 
+      color: white;
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .header-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
+    
+    /* Food Image Section */
+    .food-image-section { 
+      background: white; 
+      margin: 20px; 
+      border-radius: 25px; 
+      overflow: hidden; 
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15); 
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .food-image-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    
+    .food-image-container { 
+      width: 100%; 
+      height: 400px; 
+      position: relative; 
+      overflow: hidden; 
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #4caf50 100%);
+    }
+    .food-image { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      transition: transform 0.5s ease;
+    }
+    .food-image-section:hover .food-image {
+      transform: scale(1.05);
+    }
+    .food-image-placeholder { 
+      width: 100%; 
+      height: 100%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 150px; 
+      color: white; 
+      text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    /* Image Badges */
+    .image-badges { position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .badge { 
+      background: linear-gradient(45deg, #ff6b35, #f7931e); 
+      color: white; 
+      padding: 10px 16px; 
+      border-radius: 25px; 
+      font-size: 12px; 
+      font-weight: 700; 
+      text-transform: uppercase;
+      box-shadow: 0 6px 20px rgba(255,107,53,0.4);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      animation: badgeBounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes badgeBounce {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+    
+    .veg-badge { background: linear-gradient(45deg, #4caf50, #8bc34a); }
+    .spicy-badge { background: linear-gradient(45deg, #ff5722, #ff9800); }
+    .bestseller-badge { background: linear-gradient(45deg, #ffd700, #ffed4e); color: #333; }
+    
+    /* Favorite Button */
+    .favorite-btn-detail { 
+      position: absolute; 
+      top: 20px; 
+      right: 20px; 
+      background: rgba(255,255,255,0.95); 
+      border: none; 
+      border-radius: 50%; 
+      width: 50px; 
+      height: 50px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 22px; 
+      cursor: pointer; 
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .favorite-btn-detail:hover { 
+      background: rgba(255,107,107,0.95); 
+      color: white; 
+      transform: scale(1.1);
+    }
+    
+    /* Food Details Section */
+    .food-details { background: white; margin: 20px; border-radius: 25px; padding: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+    
+    /* Food Info */
+    .food-header { margin-bottom: 20px; }
+    .food-name { font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; line-height: 1.2; }
+    .food-category { color: #666; font-size: 16px; font-weight: 500; margin-bottom: 15px; }
+    
+    /* Rating & Price Row */
+    .food-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+    .rating-section { display: flex; align-items: center; gap: 15px; }
+    .rating-badge-detail { 
+      background: linear-gradient(45deg, #4caf50, #8bc34a); 
+      color: white; 
+      padding: 10px 18px; 
+      border-radius: 25px; 
+      font-size: 14px; 
+      font-weight: 600; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(76,175,80,0.3);
+    }
+    .rating-text-detail { font-size: 14px; color: #666; font-weight: 500; }
+    .price-section { text-align: right; }
+    .current-price { 
+      font-size: 36px; 
+      font-weight: 700; 
+      background: linear-gradient(45deg, #ff6b35, #4caf50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .original-price { font-size: 20px; color: #999; text-decoration: line-through; margin-left: 10px; }
+    .discount-percent { 
+      background: linear-gradient(45deg, #4caf50, #8bc34a); 
+      color: white; 
+      padding: 6px 12px; 
+      border-radius: 15px; 
+      font-size: 12px; 
+      font-weight: 700; 
+      margin-left: 10px;
+      animation: discountGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes discountGlow {
+      0%, 100% { box-shadow: 0 4px 15px rgba(76,175,80,0.3); }
+      50% { box-shadow: 0 8px 25px rgba(76,175,80,0.5); }
+    }
+    
+    /* Description */
+    .food-description { margin-bottom: 30px; }
+    .description-title { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 10px; }
+    .description-text { font-size: 16px; color: #666; line-height: 1.6; }
+    
+    /* Customization Options */
+    .customization-section { margin-bottom: 30px; }
+    .section-title { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 15px; }
+    
+    /* Size Options */
+    .size-options { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+    .size-option { 
+      flex: 1; 
+      min-width: 80px; 
+      padding: 12px 20px; 
+      border: 2px solid #e0e0e0; 
+      border-radius: 15px; 
+      text-align: center; 
+      cursor: pointer; 
+      transition: all 0.3s; 
+      background: white;
+    }
+    .size-option:hover { border-color: #ff6b6b; background: #fff5f5; }
+    .size-option.active { 
+      border-color: #ff6b35; 
+      background: linear-gradient(45deg, #ff6b35, #4caf50); 
+      color: white; 
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(255,107,53,0.3);
+    }
+    .size-name { font-weight: 600; font-size: 14px; }
+    .size-price { font-size: 12px; margin-top: 5px; }
+    
+    /* Spice Level */
+    .spice-level { margin-bottom: 25px; }
+    .spice-options { display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; }
+    .spice-option { 
+      padding: 10px 20px; 
+      border: 2px solid #e0e0e0; 
+      border-radius: 25px; 
+      cursor: pointer; 
+      transition: all 0.3s; 
+      font-size: 14px; 
+      font-weight: 500; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+    }
+    .spice-option:hover { border-color: #ff6b35; background: #fff3f0; }
+    .spice-option.active { 
+      border-color: #ff6b35; 
+      background: linear-gradient(45deg, #ff6b35, #4caf50); 
+      color: white; 
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255,107,53,0.3);
+    }
+    
+    /* Add-ons */
+    .addons-section { margin-bottom: 30px; }
+    .addon-item { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 15px 0; 
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .addon-item:last-child { border-bottom: none; }
+    .addon-info { flex: 1; }
+    .addon-name { font-weight: 600; color: #333; margin-bottom: 5px; }
+    .addon-desc { font-size: 14px; color: #666; }
+    .addon-price { font-weight: 600; color: #ff6b35; margin-right: 15px; font-size: 16px; }
+    .addon-checkbox { 
+      width: 24px; 
+      height: 24px; 
+      border: 2px solid #e0e0e0; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      position: relative; 
+      transition: all 0.3s;
+    }
+    .addon-checkbox.checked { 
+      background: linear-gradient(45deg, #ff6b35, #4caf50); 
+      border-color: #ff6b35; 
+      transform: scale(1.1);
+    }
+    .addon-checkbox.checked::after { 
+      content: '✓'; 
+      position: absolute; 
+      top: 50%; 
+      left: 50%; 
+      transform: translate(-50%, -50%); 
+      color: white; 
+      font-weight: bold; 
+      font-size: 12px;
+    }
+    
+    /* Quantity Selector */
+    .quantity-section { margin-bottom: 30px; }
+    .quantity-selector { display: flex; align-items: center; gap: 20px; margin-top: 10px; }
+    .quantity-btn { 
+      width: 50px; 
+      height: 50px; 
+      border-radius: 50%; 
+      border: 3px solid #ff6b35; 
+      background: white; 
+      color: #ff6b35; 
+      font-size: 24px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      transition: all 0.3s; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+    }
+    .quantity-btn:hover { 
+      background: linear-gradient(45deg, #ff6b35, #4caf50); 
+      color: white; 
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(255,107,53,0.3);
+    }
+    .quantity-display { 
+      font-size: 28px; 
+      font-weight: 700; 
+      color: #333; 
+      min-width: 60px; 
+      text-align: center;
+      background: linear-gradient(45deg, #ff6b35, #4caf50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Action Buttons */
+    .action-buttons { display: flex; gap: 15px; margin-top: 30px; }
+    .add-to-cart-btn { 
+      flex: 2; 
+      background: linear-gradient(45deg, #ff6b35, #4caf50); 
+      color: white; 
+      border: none; 
+      padding: 20px 30px; 
+      border-radius: 25px; 
+      font-size: 18px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      transition: all 0.3s; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .add-to-cart-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    .add-to-cart-btn:hover::before {
+      left: 100%;
+    }
+    
+    .add-to-cart-btn:hover { 
+      transform: translateY(-3px); 
+      box-shadow: 0 15px 40px rgba(255,107,53,0.4); 
+    }
+    .favorite-action-btn { 
+      flex: 1; 
+      background: white; 
+      color: #ff6b35; 
+      border: 3px solid #ff6b35; 
+      padding: 20px 30px; 
+      border-radius: 25px; 
+      font-size: 18px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      transition: all 0.3s; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 10px;
+    }
+    .favorite-action-btn:hover { 
+      background: linear-gradient(45deg, #ff6b35, #4caf50); 
+      color: white; 
+      transform: translateY(-3px); 
+      box-shadow: 0 12px 30px rgba(255,107,53,0.3);
+    }
+    
+    /* Nutritional Info */
+    .nutrition-section { 
+      background: linear-gradient(135deg, #fff9f5 0%, #f0fff4 100%);
+      margin: 20px; 
+      border-radius: 25px; 
+      padding: 30px; 
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      border: 2px solid rgba(255,107,53,0.1);
+    }
+    .nutrition-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 25px; margin-top: 20px; }
+    .nutrition-item { 
+      text-align: center; 
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+    .nutrition-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+    .nutrition-value { 
+      font-size: 28px; 
+      font-weight: 700; 
+      background: linear-gradient(45deg, #ff6b35, #4caf50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .nutrition-label { font-size: 14px; color: #666; font-weight: 600; }
+    
+    /* Reviews Section */
+    .reviews-section { 
+      background: white; 
+      margin: 20px; 
+      border-radius: 25px; 
+      padding: 25px; 
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12); 
+    }
+    .review-item { 
+      padding: 20px 0; 
+      border-bottom: 1px solid #f0f0f0; 
+    }
+    .review-item:last-child { border-bottom: none; }
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .reviewer-name { font-weight: 600; color: #333; }
+    .review-rating { 
+      background: #4caf50; 
+      color: white; 
+      padding: 4px 10px; 
+      border-radius: 15px; 
+      font-size: 12px; 
+      font-weight: 600;
+    }
+    .review-text { color: #666; line-height: 1.5; }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .food-meta { flex-direction: column; align-items: flex-start; }
+      .price-section { text-align: left; }
+      .size-options { flex-direction: column; }
+      .size-option { flex: none; }
+      .action-buttons { flex-direction: column; }
+      .nutrition-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 480px) {
+      .detail-header { padding: 15px; }
+      .food-details { margin: 15px; padding: 20px; }
+      .food-name { font-size: 24px; }
+      .current-price { font-size: 28px; }
+      .spice-options { flex-direction: column; }
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .food-details > * { animation: fadeInUp 0.6s ease forwards; }
+    .food-details > *:nth-child(1) { animation-delay: 0.1s; }
+    .food-details > *:nth-child(2) { animation-delay: 0.2s; }
+    .food-details > *:nth-child(3) { animation-delay: 0.3s; }
+    .food-details > *:nth-child(4) { animation-delay: 0.4s; }
+    .food-details > *:nth-child(5) { animation-delay: 0.5s; }
+    
+    /* Toast Notification */
+    .toast { 
+      position: fixed; 
+      top: 100px; 
+      right: 20px; 
+      z-index: 1000; 
+      background: linear-gradient(45deg, #4caf50, #8bc34a);
+      color: white; 
+      padding: 16px 28px; 
+      border-radius: 25px; 
+      font-weight: 600; 
+      font-size: 14px; 
+      transform: translateX(100%); 
+      transition: all 0.3s ease; 
+      box-shadow: 0 10px 35px rgba(76,175,80,0.3);
+      backdrop-filter: blur(10px);
+    }
+    .toast.show { transform: translateX(0); }
+    
+    /* Bottom Navigation */
+    .bottom-nav { 
+      position: fixed; 
+      bottom: 0; 
+      left: 0; 
+      right: 0; 
+      background: white; 
+      padding: 15px 0 10px; 
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.1); 
+      display: flex; 
+      justify-content: space-around; 
+      border-radius: 25px 25px 0 0; 
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    
+    .nav-item { 
+      text-align: center; 
+      color: #666; 
+      text-decoration: none; 
+      font-size: 12px; 
+      font-weight: 600; 
+      transition: all 0.3s; 
+      padding: 8px 15px;
+      border-radius: 20px;
+    }
+    
+    .nav-item.active { 
+      background: linear-gradient(45deg, #ff6b35, #4caf50);
+      color: white; 
+      transform: scale(1.05); 
+    }
+    
+    .nav-icon { 
+      font-size: 24px; 
+      margin-bottom: 5px; 
+    }
+    
+    /* Loading States */
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Floating Action Button */
+    .floating-btn {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(45deg, #ff6b35, #4caf50);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(255,107,53,0.3);
+      transition: all 0.3s ease;
+      z-index: 99;
+    }
+    
+    .floating-btn:hover {
+      transform: scale(1.1) rotate(15deg);
+      box-shadow: 0 12px 40px rgba(255,107,53,0.4);
+    }
+    
+    /* Sticky Add to Cart */
+    .sticky-add-to-cart {
+      position: sticky;
+      bottom: 20px;
+      margin: 20px;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+    
+    .sticky-price-info {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .sticky-add-btn {
+      background: linear-gradient(45deg, #ff6b35, #4caf50);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .sticky-add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255,107,53,0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="detail-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button class="back-btn" onclick="history.back()">←</button>
+        <h1 class="page-title">🍽️ Food Details</h1>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" onclick="shareItem()" title="Share">📤</button>
+        <button class="header-btn" onclick="viewCart()" title="Cart">🛒</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Food Image Section -->
+  <div class="food-image-section">
+    <div class="food-image-container">
+      <div class="food-image-placeholder">🍕</div>
+      <!-- For real implementation, replace with: -->
+      <!-- <img src="{% static 'images/margherita-pizza.jpg' %}" alt="Margherita Pizza" class="food-image"> -->
+      
+      <div class="image-badges">
+        <div class="badge veg-badge">VEG</div>
+        <div class="badge bestseller-badge">BESTSELLER</div>
+        <div class="badge spicy-badge">MILD</div>
+      </div>
+      
+      <button class="favorite-btn-detail" onclick="toggleFavorite(this)">🤍</button>
+    </div>
+  </div>
+
+  <!-- Food Details -->
+  <div class="food-details">
+    <!-- Food Header -->
+    <div class="food-header">
+      <h1 class="food-name">🍕 Margherita Pizza</h1>
+      <p class="food-category">Italian • Pizza • Vegetarian • TiffinRush Special</p>
+    </div>
+
+    <!-- Rating & Price -->
+    <div class="food-meta">
+      <div class="rating-section">
+        <div class="rating-badge-detail">
+          <span>⭐</span>
+          <span>4.5</span>
+        </div>
+        <span class="rating-text-detail">Based on 1,247 reviews</span>
+      </div>
+      <div class="price-section">
+        <span class="current-price">₹299</span>
+        <span class="original-price">₹399</span>
+        <span class="discount-percent">25% OFF</span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="food-description">
+      <h3 class="description-title">Description</h3>
+      <p class="description-text">
+        A classic Italian pizza topped with fresh mozzarella cheese, ripe tomatoes, and aromatic basil leaves. 
+        Made with hand-tossed dough and baked to perfection in our wood-fired oven. Simple ingredients, extraordinary taste!
+      </p>
+    </div>
+
+    <!-- Customization Options -->
+    <div class="customization-section">
+      <h3 class="section-title">Choose Size</h3>
+      <div class="size-options">
+        <div class="size-option" onclick="selectSize(this, 199)">
+          <div class="size-name">Small</div>
+          <div class="size-price">₹199</div>
+        </div>
+        <div class="size-option active" onclick="selectSize(this, 299)">
+          <div class="size-name">Medium</div>
+          <div class="size-price">₹299</div>
+        </div>
+        <div class="size-option" onclick="selectSize(this, 399)">
+          <div class="size-name">Large</div>
+          <div class="size-price">₹399</div>
+        </div>
+      </div>
+
+      <!-- Spice Level -->
+      <div class="spice-level">
+        <h3 class="section-title">Spice Level</h3>
+        <div class="spice-options">
+          <div class="spice-option active" onclick="selectSpice(this)">
+            <span>🌶️</span>
+            <span>Mild</span>
+          </div>
+          <div class="spice-option" onclick="selectSpice(this)">
+            <span>🌶️🌶️</span>
+            <span>Medium</span>
+          </div>
+          <div class="spice-option" onclick="selectSpice(this)">
+            <span>🌶️🌶️🌶️</span>
+            <span>Hot</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add-ons -->
+      <div class="addons-section">
+        <h3 class="section-title">Add-ons</h3>
+        <div class="addon-item">
+          <div class="addon-info">
+            <div class="addon-name">Extra Cheese</div>
+            <div class="addon-desc">Double the cheese for extra richness</div>
+          </div>
+          <span class="addon-price">+₹50</span>
+          <div class="addon-checkbox" onclick="toggleAddon(this, 50)"></div>
+        </div>
+        <div class="addon-item">
+          <div class="addon-info">
+            <div class="addon-name">Mushrooms</div>
+            <div class="addon-desc">Fresh button mushrooms</div>
+          </div>
+          <span class="addon-price">+₹30</span>
+          <div class="addon-checkbox" onclick="toggleAddon(this, 30)"></div>
+        </div>
+        <div class="addon-item">
+          <div class="addon-info">
+            <div class="addon-name">Black Olives</div>
+            <div class="addon-desc">Premium black olives</div>
+          </div>
+          <span class="addon-price">+₹25</span>
+          <div class="addon-checkbox" onclick="toggleAddon(this, 25)"></div>
+        </div>
+        <div class="addon-item">
+          <div class="addon-info">
+            <div class="addon-name">Bell Peppers</div>
+            <div class="addon-desc">Colorful bell peppers</div>
+          </div>
+          <span class="addon-price">+₹20</span>
+          <div class="addon-checkbox" onclick="toggleAddon(this, 20)"></div>
+        </div>
+      </div>
+
+      <!-- Quantity -->
+      <div class="quantity-section">
+        <h3 class="section-title">Quantity</h3>
+        <div class="quantity-selector">
+          <button class="quantity-btn" onclick="changeQuantity(-1)">−</button>
+          <span class="quantity-display" id="quantity">1</span>
+          <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="add-to-cart-btn" onclick="addToCart()">
+        <span>🛒</span>
+        <span>Add to Cart - ₹<span id="totalPrice">299</span></span>
+      </button>
+      <button class="favorite-action-btn" onclick="toggleFavoriteAction()">
+        <span id="favoriteIcon">🤍</span>
+        <span>Favorite</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Nutritional Information -->
+  <div class="nutrition-section">
+    <h3 class="section-title">Nutritional Information</h3>
+    <div class="nutrition-grid">
+      <div class="nutrition-item">
+        <div class="nutrition-value">420</div>
+        <div class="nutrition-label">Calories</div>
+      </div>
+      <div class="nutrition-item">
+        <div class="nutrition-value">18g</div>
+        <div class="nutrition-label">Protein</div>
+      </div>
+      <div class="nutrition-item">
+        <div class="nutrition-value">45g</div>
+        <div class="nutrition-label">Carbs</div>
+      </div>
+      <div class="nutrition-item">
+        <div class="nutrition-value">15g</div>
+        <div class="nutrition-label">Fat</div>
+      </div>
+      <div class="nutrition-item">
+        <div class="nutrition-value">2.5g</div>
+        <div class="nutrition-label">Fiber</div>
+      </div>
+      <div class="nutrition-item">
+        <div class="nutrition-value">890mg</div>
+        <div class="nutrition-label">Sodium</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <div class="reviews-section">
+    <h3 class="section-title">Customer Reviews</h3>
+    
+    <div class="review-item">
+      <div class="review-header">
+        <span class="reviewer-name">Priya Sharma</span>
+        <span class="review-rating">⭐ 5.0</span>
+      </div>
+      <p class="review-text">
+        "Absolutely delicious! The crust was perfectly crispy and the toppings were fresh. 
+        Best margherita pizza I've had in a long time. Will definitely order again!"
+      </p>
+    </div>
+    
+    <div class="review-item">
+      <div class="review-header">
+        <span class="reviewer-name">Raj Patel</span>
+        <span class="review-rating">⭐ 4.5</span>
+      </div>
+      <p class="review-text">
+        "Great taste and quick delivery. The cheese quality is excellent and the basil was aromatic. 
+        Only minor issue was it arrived slightly cooler than expected."
+      </p>
+    </div>
+    
+    <div class="review-item">
+      <div class="review-header">
+        <span class="reviewer-name">Anita Kumar</span>
+        <span class="review-rating">⭐ 5.0</span>
+      </div>
+      <p class="review-text">
+        "Perfect pizza! Loved the authentic Italian taste. The dough was well-made and 
+        toppings were generous. Highly recommended for pizza lovers!"
+      </p>
+    </div>
+  </div>
+
+  <!-- Sticky Add to Cart -->
+  <div class="sticky-add-to-cart">
+    <div class="sticky-price-info">
+      <span>Total: ₹<span id="stickyTotalPrice">299</span></span>
+    </div>
+    <button class="sticky-add-btn" onclick="addToCart()">
+      🛒 Add to Cart
+    </button>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button class="floating-btn" onclick="scrollToTop()" title="Scroll to top">
+    ↑
+  </button>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="/" class="nav-item">
+      <div class="nav-icon">🏠</div>
+      <div>Home</div>
+    </a>
+    <a href="/restaurants/" class="nav-item">
+      <div class="nav-icon">🍽️</div>
+      <div>Restaurants</div>
+    </a>
+    <a href="/menu/" class="nav-item active">
+      <div class="nav-icon">📋</div>
+      <div>Menu</div>
+    </a>
+    <a href="/cart/" class="nav-item">
+      <div class="nav-icon">🛒</div>
+      <div>Cart</div>
+    </a>
+    <a href="/profile/" class="nav-item">
+      <div class="nav-icon">👤</div>
+      <div>Profile</div>
+    </a>
+  </nav>
+
+  <script>
+    let currentPrice = 299;
+    let basePrice = 299;
+    let quantity = 1;
+    let addons = [];
+    let isFavorite = false;
+
+    // Size selection
+    function selectSize(element, price) {
+      document.querySelectorAll('.size-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      element.classList.add('active');
+      basePrice = price;
+      updateTotalPrice();
+    }
+
+    // Spice level selection
+    function selectSpice(element) {
+      document.querySelectorAll('.spice-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      element.classList.add('active');
+    }
+
+    // Toggle addon
+    function toggleAddon(element, price) {
+      element.classList.toggle('checked');
+      if (element.classList.contains('checked')) {
+        addons.push(price);
+      } else {
+        const index = addons.indexOf(price);
+        if (index > -1) {
+          addons.splice(index, 1);
+        }
+      }
+      updateTotalPrice();
+    }
+
+    // Change quantity
+    function changeQuantity(change) {
+      const newQuantity = quantity + change;
+      if (newQuantity >= 1 && newQuantity <= 10) {
+        quantity = newQuantity;
+        document.getElementById('quantity').textContent = quantity;
+        updateTotalPrice();
+      }
+    }
+
+    // Update total price
+    function updateTotalPrice() {
+      const addonTotal = addons.reduce((sum, price) => sum + price, 0);
+      currentPrice = (basePrice + addonTotal) * quantity;
+      document.getElementById('totalPrice').textContent = currentPrice;
+      document.getElementById('stickyTotalPrice').textContent = currentPrice;
+    }
+
+    // Toggle favorite (header button)
+    function toggleFavorite(btn) {
+      if (btn.textContent === '🤍') {
+        btn.textContent = '❤️';
+        btn.style.background = 'rgba(255,107,107,0.95)';
+        btn.style.color = 'white';
+        isFavorite = true;
+        updateFavoriteActionButton();
+        showToast('Added to favorites!');
+      } else {
+        btn.textContent = '🤍';
+        btn.style.background = 'rgba(255,255,255,0.95)';
+        btn.style.color = '#333';
+        isFavorite = false;
+        updateFavoriteActionButton();
+        showToast('Removed from favorites!');
+      }
+    }
+
+    // Toggle favorite (action button)
+    function toggleFavoriteAction() {
+      const headerBtn = document.querySelector('.favorite-btn-detail');
+      toggleFavorite(headerBtn);
+    }
+
+    // Update favorite action button
+    function updateFavoriteActionButton() {
+      const icon = document.getElementById('favoriteIcon');
+      icon.textContent = isFavorite ? '❤️' : '🤍';
+    }
+
+    // Add to cart
+    function addToCart() {
+      // Add loading state
+      const addBtn = document.querySelector('.add-to-cart-btn');
+      const stickyBtn = document.querySelector('.sticky-add-btn');
+      
+      addBtn.classList.add('loading');
+      stickyBtn.classList.add('loading');
+      addBtn.textContent = 'Adding...';
+      stickyBtn.textContent = 'Adding...';
+
+      const item = {
+        name: '🍕 Margherita Pizza',
+        price: basePrice,
+        quantity: quantity,
+        addons: addons,
+        totalPrice: currentPrice,
+        size: document.querySelector('.size-option.active').querySelector('.size-name').textContent,
+        spice: document.querySelector('.spice-option.active').textContent.trim(),
+        timestamp: new Date().toISOString(),
+        restaurant: 'TiffinRush'
+      };
+
+      // Get existing cart from localStorage
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      cart.push(item);
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      // Simulate API call delay
+      setTimeout(() => {
+        addBtn.classList.remove('loading');
+        stickyBtn.classList.remove('loading');
+        addBtn.innerHTML = '<span>🛒</span><span>Add to Cart - ₹<span id="totalPrice">' + currentPrice + '</span></span>';
+        stickyBtn.textContent = '🛒 Add to Cart';
+        
+        showToast(`🎉 Added ${quantity} item(s) to cart for ₹${currentPrice}!`);
+        
+        // Update cart badge count (if exists)
+        updateCartBadge();
+        
+        // Optional: Redirect to cart or menu after a delay
+        // setTimeout(() => {
+        //   window.location.href = '/cart/';
+        // }, 2000);
+      }, 1500);
+    }
+
+    // Share item
+    function shareItem() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Margherita Pizza - FoodExpress',
+          text: 'Check out this delicious Margherita Pizza!',
+          url: window.location.href
+        });
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+          showToast('Link copied to clipboard!');
+        });
+      }
+    }
+
+    // View cart
+    function viewCart() {
+      showToast('🛒 Redirecting to cart...');
+      setTimeout(() => {
+        window.location.href = '/cart/';
+      }, 1000);
+    }
+
+    // Scroll to top
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    // Update cart badge
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const cartBadges = document.querySelectorAll('.cart-badge');
+      cartBadges.forEach(badge => {
+        badge.textContent = cart.length;
+        badge.style.display = cart.length > 0 ? 'block' : 'none';
+      });
+    }
+
+    // Parallax effect for image
+    function addParallaxEffect() {
+      window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const imageContainer = document.querySelector('.food-image-container');
+        if (imageContainer) {
+          imageContainer.style.transform = `translateY(${scrolled * 0.3}px)`;
+        }
+      });
+    }
+
+    // Auto-hide sticky cart when reaching bottom
+    function handleStickyCart() {
+      const stickyCart = document.querySelector('.sticky-add-to-cart');
+      const bottomNav = document.querySelector('.bottom-nav');
+      
+      window.addEventListener('scroll', () => {
+        const scrollPosition = window.scrollY + window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        
+        if (scrollPosition >= documentHeight - 200) {
+          stickyCart.style.transform = 'translateY(100%)';
+        } else {
+          stickyCart.style.transform = 'translateY(0)';
+        }
+      });
+    }
+
+    // Show toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => toast.classList.remove('show'), 3000);
+      setTimeout(() => document.body.removeChild(toast), 3500);
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add smooth loading animation
+      const elements = document.querySelectorAll('.food-details > *');
+      elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+          el.style.transition = 'all 0.6s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+
+      // Set initial values
+      updateTotalPrice();
+      updateCartBadge();
+      
+      // Initialize effects
+      addParallaxEffect();
+      handleStickyCart();
+      
+      // Add intersection observer for animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animationPlayState = 'running';
+          }
+        });
+      });
+      
+      document.querySelectorAll('.nutrition-item, .review-item').forEach(item => {
+        observer.observe(item);
+      });
+      
+      // Add touch gestures for mobile
+      let touchStartX = 0;
+      let touchEndX = 0;
+      
+      document.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+      
+      document.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+      
+      function handleSwipe() {
+        if (touchEndX < touchStartX - 50) {
+          // Swipe left - next item
+          showToast('💫 Swipe detected!');
+        }
+        if (touchEndX > touchStartX + 50) {
+          // Swipe right - previous item  
+          showToast('✨ Swipe detected!');
+        }
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        history.back();
+      } else if (e.key === '+' || e.key === '=') {
+        changeQuantity(1);
+      } else if (e.key === '-') {
+        changeQuantity(-1);
+      } else if (e.key === 'Enter') {
+        addToCart();
+      }
+    });
+  </script>
+</body>
+</html>

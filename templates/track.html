@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Order - TiffinRush</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+  <script src="{% static 'script.js' %}"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #4caf50 100%);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* Header */
+    .track-header {
+      background: linear-gradient(135deg, #ff6b35, #4caf50);
+      color: white;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .track-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255,255,255,0.05) 10px,
+        rgba(255,255,255,0.05) 20px
+      );
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      font-size: 24px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateX(-3px);
+    }
+
+    .track-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .order-id {
+      font-size: 16px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    /* Main Container */
+    .track-container {
+      max-width: 1200px;
+      margin: -40px auto 40px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Status Card */
+    .status-card {
+      background: white;
+      border-radius: 25px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,107,53,0.05), rgba(76,175,80,0.05));
+      pointer-events: none;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .status-header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .status-icon {
+      font-size: 60px;
+      margin-bottom: 15px;
+      display: block;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .status-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ff6b35, #4caf50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .status-subtitle {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .estimated-time {
+      background: linear-gradient(135deg, #ff6b35, #4caf50);
+      color: white;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-weight: 600;
+      display: inline-block;
+      font-size: 16px;
+      box-shadow: 0 8px 25px rgba(255,107,53,0.3);
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      margin: 40px 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 30px;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, #4caf50 0%, #ffeb3b 50%, #ff6b35 100%);
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .timeline-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 600;
+      margin-right: 25px;
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+
+    .timeline-item.completed .timeline-icon {
+      background: linear-gradient(135deg, #4caf50, #8bc34a);
+      color: white;
+      box-shadow: 0 8px 25px rgba(76,175,80,0.4);
+    }
+
+    .timeline-item.active .timeline-icon {
+      background: linear-gradient(135deg, #ff6b35, #ffa726);
+      color: white;
+      box-shadow: 0 8px 25px rgba(255,107,53,0.4);
+      animation: pulse 2s infinite;
+    }
+
+    .timeline-item.pending .timeline-icon {
+      background: #f5f5f5;
+      color: #999;
+      border: 3px solid #e0e0e0;
+    }
+
+    .timeline-content {
+      flex: 1;
+      padding-top: 8px;
+    }
+
+    .timeline-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .timeline-time {
+      font-size: 14px;
+      color: #ff6b35;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .timeline-description {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* Live Map Section */
+    .live-map-section {
+      background: white;
+      border-radius: 25px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .live-map-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,107,53,0.03), rgba(76,175,80,0.03));
+      pointer-events: none;
+    }
+
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .map-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .live-indicator {
+      background: linear-gradient(135deg, #ff4757, #ff6b7d);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      animation: pulse 2s infinite;
+      box-shadow: 0 4px 15px rgba(255,71,87,0.3);
+    }
+
+    .map-container {
+      background: #f8f9fa;
+      border-radius: 20px;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      border: 2px dashed #e0e0e0;
+      margin-bottom: 25px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .map-container:hover {
+      border-color: #ff6b35;
+      background: #fff5f0;
+    }
+
+    .map-placeholder {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .map-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .delivery-partner-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(76,175,80,0.1));
+      padding: 20px;
+      border-radius: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .partner-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff6b35, #4caf50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: white;
+      box-shadow: 0 8px 25px rgba(255,107,53,0.3);
+    }
+
+    .partner-details {
+      flex: 1;
+    }
+
+    .partner-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .partner-phone {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .call-btn {
+      background: linear-gradient(135deg, #4caf50, #8bc34a);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(76,175,80,0.3);
+    }
+
+    .call-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(76,175,80,0.4);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .support-btn, .cancel-btn {
+      flex: 1;
+      max-width: 200px;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .support-btn {
+      background: linear-gradient(135deg, #4caf50, #8bc34a);
+      color: white;
+      box-shadow: 0 8px 25px rgba(76,175,80,0.3);
+    }
+
+    .support-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(76,175,80,0.4);
+    }
+
+    .cancel-btn {
+      background: linear-gradient(135deg, #ff6b35, #ffa726);
+      color: white;
+      box-shadow: 0 8px 25px rgba(255,107,53,0.3);
+    }
+
+    .cancel-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(255,107,53,0.4);
+    }
+
+    /* Order Details */
+    .order-details {
+      background: white;
+      border-radius: 25px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    }
+
+    .details-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .detail-item:last-child {
+      border-bottom: none;
+    }
+
+    .detail-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff6b35, #4caf50);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .detail-text {
+      font-size: 16px;
+      color: #333;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .track-container {
+        padding: 0 15px;
+      }
+      
+      .status-card,
+      .live-map-section,
+      .order-details {
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      
+      .status-title {
+        font-size: 24px;
+      }
+      
+      .timeline-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .map-container {
+        height: 250px;
+      }
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(2deg); }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 8px 25px rgba(255,107,53,0.4); }
+      50% { transform: scale(1.05); box-shadow: 0 12px 35px rgba(255,107,53,0.6); }
+      100% { transform: scale(1); box-shadow: 0 8px 25px rgba(255,107,53,0.4); }
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      z-index: 1000;
+      background: linear-gradient(135deg, #4caf50, #8bc34a);
+      color: white;
+      padding: 16px 28px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 14px;
+      transform: translateX(100%);
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 35px rgba(76,175,80,0.3);
+    }
+    
+    .toast.show { transform: translateX(0); }
+    
+    .toast.error {
+      background: linear-gradient(135deg, #ff4757, #ff6b7d);
+      box-shadow: 0 10px 35px rgba(255,71,87,0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="track-header">
+    <div class="header-content">
+      <button class="back-btn" onclick="history.back()">←</button>
+      <div>
+        <h1 class="track-title">🚚 Track Order</h1>
+        <p class="order-id">Order ID: #TR240730-001</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="track-container">
+    <!-- Order Status Card -->
+    <div class="status-card">
+      <div class="status-header">
+        <div class="status-icon">🛵</div>
+        <h2 class="status-title">Out for Delivery</h2>
+        <p class="status-subtitle">Your delicious meal is on the way!</p>
+        <div class="estimated-time">⏰ Arriving in 12-15 minutes</div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline">
+        <div class="timeline-item completed">
+          <div class="timeline-icon">✅</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Order Confirmed</div>
+            <div class="timeline-time">2:30 PM</div>
+            <div class="timeline-description">Your order has been received and confirmed</div>
+          </div>
+        </div>
+        
+        <div class="timeline-item completed">
+          <div class="timeline-icon">👨‍�</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Food Being Prepared</div>
+            <div class="timeline-time">2:45 PM</div>
+            <div class="timeline-description">Chef is preparing your fresh meal</div>
+          </div>
+        </div>
+        
+        <div class="timeline-item completed">
+          <div class="timeline-icon">📦</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Food Ready</div>
+            <div class="timeline-time">3:10 PM</div>
+            <div class="timeline-description">Your order is packed and ready</div>
+          </div>
+        </div>
+        
+        <div class="timeline-item active">
+          <div class="timeline-icon">🛵</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Out for Delivery</div>
+            <div class="timeline-time">3:15 PM</div>
+            <div class="timeline-description">Delivery partner is on the way</div>
+          </div>
+        </div>
+        
+        <div class="timeline-item pending">
+          <div class="timeline-icon">🏠</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Delivered</div>
+            <div class="timeline-time">Expected: 3:35 PM</div>
+            <div class="timeline-description">Enjoy your meal!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="support-btn" onclick="contactSupport()">
+          <span>📞</span>
+          <span>Contact Support</span>
+        </button>
+        <button class="cancel-btn" onclick="cancelOrder()">
+          <span>❌</span>
+          <span>Cancel Order</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Map Section -->
+    <div class="live-map-section">
+      <div class="map-header">
+        <h3 class="map-title">
+          <span>�️</span>
+          <span>Live Tracking</span>
+        </h3>
+        <div class="live-indicator">● LIVE</div>
+      </div>
+      
+      <div class="map-container" onclick="openFullScreenMap()">
+        <div class="map-placeholder">
+          <div class="map-icon">�</div>
+          <div>Live delivery tracking map</div>
+          <div style="font-size: 14px; margin-top: 8px; opacity: 0.8;">
+            Click to open full-screen map
+          </div>
+        </div>
+      </div>
+      
+      <div class="delivery-partner-info">
+        <div class="partner-avatar">🧑‍💼</div>
+        <div class="partner-details">
+          <div class="partner-name">Raj Kumar</div>
+          <div class="partner-phone">+91 98765-43210</div>
+        </div>
+        <button class="call-btn" onclick="callDeliveryPartner()">
+          📞 Call
+        </button>
+      </div>
+    </div>
+
+    <!-- Order Details -->
+    <div class="order-details">
+      <h3 class="details-title">
+        <span>📋</span>
+        <span>Order Details</span>
+      </h3>
+      
+      <div class="detail-item">
+        <div class="detail-icon">🍽️</div>
+        <div class="detail-text">
+          <strong>Restaurant:</strong> TiffinRush - Sector 15<br>
+          <span style="color: #666; font-size: 14px;">Delicious meals, delivered fresh</span>
+        </div>
+      </div>
+      
+      <div class="detail-item">
+        <div class="detail-icon">📍</div>
+        <div class="detail-text">
+          <strong>Delivery Address:</strong> 123 Main Street, Apartment 4B<br>
+          <span style="color: #666; font-size: 14px;">Near Central Park, Sector 12</span>
+        </div>
+      </div>
+      
+      <div class="detail-item">
+        <div class="detail-icon">💳</div>
+        <div class="detail-text">
+          <strong>Payment:</strong> ₹485 (Cash on Delivery)<br>
+          <span style="color: #666; font-size: 14px;">Total includes taxes and delivery charges</span>
+        </div>
+      </div>
+      
+      <div class="detail-item">
+        <div class="detail-icon">🎯</div>
+        <div class="detail-text">
+          <strong>Order Type:</strong> Regular Delivery<br>
+          <span style="color: #666; font-size: 14px;">Standard delivery service</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Contact Support Function
+    function contactSupport() {
+      showToast('Connecting to support...', 'success');
+      // Simulate API call
+      setTimeout(() => {
+        showToast('Support will call you within 2 minutes', 'success');
+      }, 1500);
+    }
+
+    // Cancel Order Function
+    function cancelOrder() {
+      if (confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+        showToast('Order cancellation initiated...', 'error');
+        // Simulate API call
+        setTimeout(() => {
+          showToast('Order cancelled successfully. Refund will be processed in 3-5 business days.', 'success');
+          // Update UI to show cancelled state
+          updateOrderStatus('cancelled');
+        }, 2000);
+      }
+    }
+
+    // Call Delivery Partner Function
+    function callDeliveryPartner() {
+      showToast('Calling delivery partner...', 'success');
+      // In a real app, this would initiate a phone call
+      setTimeout(() => {
+        window.location.href = 'tel:+919876543210';
+      }, 1000);
+    }
+
+    // Open Full Screen Map
+    function openFullScreenMap() {
+      showToast('Opening live tracking map...', 'success');
+      // In a real app, this would open Google Maps or integrated map
+      setTimeout(() => {
+        // Example: window.open with map coordinates
+        showToast('Map feature available in mobile app', 'success');
+      }, 1000);
+    }
+
+    // Update Order Status
+    function updateOrderStatus(status) {
+      const statusCard = document.querySelector('.status-card');
+      const statusIcon = document.querySelector('.status-icon');
+      const statusTitle = document.querySelector('.status-title');
+      const statusSubtitle = document.querySelector('.status-subtitle');
+      const estimatedTime = document.querySelector('.estimated-time');
+
+      switch(status) {
+        case 'cancelled':
+          statusIcon.textContent = '❌';
+          statusTitle.textContent = 'Order Cancelled';
+          statusSubtitle.textContent = 'Your order has been cancelled';
+          estimatedTime.textContent = '💰 Refund processing...';
+          statusCard.style.background = 'linear-gradient(135deg, rgba(255,71,87,0.1), rgba(255,107,107,0.1))';
+          break;
+        case 'delivered':
+          statusIcon.textContent = '✅';
+          statusTitle.textContent = 'Delivered';
+          statusSubtitle.textContent = 'Your order has been delivered successfully!';
+          estimatedTime.textContent = '🎉 Delivered at 3:35 PM';
+          break;
+      }
+    }
+
+    // Toast Notification Function
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type === 'error' ? 'error' : ''}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      // Show toast
+      setTimeout(() => toast.classList.add('show'), 100);
+      
+      // Hide toast after 3 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // Real-time status simulation
+    function simulateRealTimeUpdates() {
+      const statuses = [
+        { status: 'confirmed', time: '2:30 PM', message: 'Order confirmed!' },
+        { status: 'preparing', time: '2:45 PM', message: 'Chef started preparing your meal' },
+        { status: 'ready', time: '3:10 PM', message: 'Food is ready for pickup' },
+        { status: 'picked', time: '3:15 PM', message: 'Delivery partner picked up your order' },
+        { status: 'nearby', time: '3:25 PM', message: 'Delivery partner is nearby' },
+        { status: 'delivered', time: '3:35 PM', message: 'Order delivered successfully!' }
+      ];
+      
+      let currentIndex = 3; // Start from "out for delivery"
+      
+      const interval = setInterval(() => {
+        if (currentIndex < statuses.length - 1) {
+          currentIndex++;
+          const status = statuses[currentIndex];
+          showToast(status.message, 'success');
+          
+          // Update timeline
+          updateTimeline(currentIndex);
+          
+          // Update UI if delivered
+          if (status.status === 'delivered') {
+            updateOrderStatus('delivered');
+            clearInterval(interval);
+          }
+        }
+      }, 30000); // Update every 30 seconds for demo
+    }
+
+    // Update Timeline
+    function updateTimeline(activeIndex) {
+      const timelineItems = document.querySelectorAll('.timeline-item');
+      timelineItems.forEach((item, index) => {
+        if (index < activeIndex) {
+          item.className = 'timeline-item completed';
+        } else if (index === activeIndex) {
+          item.className = 'timeline-item active';
+        } else {
+          item.className = 'timeline-item pending';
+        }
+      });
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Welcome message
+      setTimeout(() => {
+        showToast('🚚 Live tracking active! Real-time updates enabled.', 'success');
+      }, 1000);
+      
+      // Add pulse animation to active timeline item
+      const activeItem = document.querySelector('.timeline-item.active .timeline-icon');
+      if (activeItem) {
+        activeItem.style.animation = 'pulse 2s infinite';
+      }
+      
+      // Start real-time simulation (comment out for production)
+      // simulateRealTimeUpdates();
+      
+      // Add click handler for map container
+      const mapContainer = document.querySelector('.map-container');
+      if (mapContainer) {
+        mapContainer.addEventListener('click', openFullScreenMap);
+      }
+    });
+
+    // Page visibility API for background updates
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) {
+        showToast('Welcome back! Checking for order updates...', 'success');
+        // In a real app, this would fetch latest order status
+      }
+    });
+
+    // Service Worker registration for push notifications (optional)
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('Service Worker registered for push notifications');
+        })
+        .catch(function(error) {
+          console.log('Service Worker registration failed:', error);
+        });
+    }
+
+    // Back button functionality
+    function goBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '/';
+      }
+    }
+  </script>
+</body>
+</html>

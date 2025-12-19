@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiffinRush Logo Showcase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Poppins:wght@400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      min-height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      padding: 20px;
+    }
+    
+    .showcase-container { 
+      background: white; 
+      border-radius: 25px; 
+      padding: 40px; 
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15); 
+      max-width: 1200px; 
+      width: 100%;
+    }
+    
+    .page-title { 
+      text-align: center; 
+      font-size: 32px; 
+      font-weight: 700; 
+      color: #333; 
+      margin-bottom: 40px; 
+    }
+    
+    /* Logo Variations */
+    .logo-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+      gap: 30px; 
+      margin-bottom: 40px; 
+    }
+    
+    .logo-card { 
+      background: #f8f9fa; 
+      border-radius: 20px; 
+      padding: 30px; 
+      text-align: center; 
+      transition: all 0.3s;
+    }
+    
+    .logo-card:hover { 
+      transform: translateY(-5px); 
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1); 
+    }
+    
+    .logo-title { 
+      font-size: 18px; 
+      font-weight: 600; 
+      color: #333; 
+      margin-bottom: 20px; 
+    }
+    
+    /* Main Logo Design */
+    .tiffin-logo-main { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 15px; 
+      padding: 15px 25px; 
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #4caf50 100%); 
+      border-radius: 50px; 
+      box-shadow: 0 8px 30px rgba(255,107,53,0.3); 
+      position: relative; 
+      overflow: hidden;
+    }
+    
+    .tiffin-logo-main::before { 
+      content: ''; 
+      position: absolute; 
+      top: -50%; 
+      left: -50%; 
+      width: 200%; 
+      height: 200%; 
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); 
+      transform: rotate(45deg); 
+      animation: shine 3s infinite;
+    }
+    
+    @keyframes shine { 
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); } 
+      50% { transform: translateX(100%) translateY(100%) rotate(45deg); } 
+      100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); } 
+    }
+    
+    .logo-icon { 
+      width: 50px; 
+      height: 50px; 
+      background: white; 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 24px; 
+      position: relative; 
+      z-index: 2;
+    }
+    
+    .logo-text { 
+      font-family: 'Fredoka One', cursive; 
+      font-size: 28px; 
+      color: white; 
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2); 
+      position: relative; 
+      z-index: 2;
+    }
+    
+    /* Scooter Logo Variation */
+    .tiffin-logo-scooter { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 12px; 
+      padding: 12px 20px; 
+      background: linear-gradient(45deg, #4caf50 0%, #8bc34a 50%, #ff6b35 100%); 
+      border-radius: 40px; 
+      box-shadow: 0 6px 25px rgba(76,175,80,0.3);
+    }
+    
+    .scooter-icon { 
+      width: 45px; 
+      height: 45px; 
+      background: white; 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 20px; 
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce { 
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 
+      40% { transform: translateY(-10px); } 
+      60% { transform: translateY(-5px); } 
+    }
+    
+    .scooter-text { 
+      font-family: 'Quicksand', sans-serif; 
+      font-size: 24px; 
+      font-weight: 700; 
+      color: white; 
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    /* Minimal Logo */
+    .tiffin-logo-minimal { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 10px; 
+      padding: 10px 18px; 
+      background: white; 
+      border: 3px solid #ff6b35; 
+      border-radius: 30px; 
+      transition: all 0.3s;
+    }
+    
+    .tiffin-logo-minimal:hover { 
+      background: #ff6b35; 
+      transform: scale(1.05);
+    }
+    
+    .tiffin-logo-minimal:hover .minimal-text { 
+      color: white; 
+    }
+    
+    .minimal-icon { 
+      font-size: 20px; 
+    }
+    
+    .minimal-text { 
+      font-family: 'Poppins', sans-serif; 
+      font-size: 20px; 
+      font-weight: 700; 
+      color: #ff6b35; 
+      transition: all 0.3s;
+    }
+    
+    /* Plate Logo */
+    .tiffin-logo-plate { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 15px; 
+      padding: 15px 25px; 
+      background: linear-gradient(135deg, #4caf50 0%, #8bc34a 40%, #ff6b35 100%); 
+      border-radius: 60px; 
+      box-shadow: 0 10px 35px rgba(76,175,80,0.4); 
+      position: relative;
+    }
+    
+    .plate-icon { 
+      width: 55px; 
+      height: 55px; 
+      background: radial-gradient(circle, #fff 60%, #f0f0f0 100%); 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 26px; 
+      border: 3px solid rgba(255,255,255,0.3); 
+      animation: rotate 4s linear infinite;
+    }
+    
+    @keyframes rotate { 
+      from { transform: rotate(0deg); } 
+      to { transform: rotate(360deg); } 
+    }
+    
+    .plate-text { 
+      font-family: 'Fredoka One', cursive; 
+      font-size: 26px; 
+      color: white; 
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+    }
+    
+    /* Badge Style Logo */
+    .tiffin-logo-badge { 
+      display: inline-block; 
+      position: relative; 
+      padding: 20px 30px; 
+      background: linear-gradient(45deg, #ff6b35, #4caf50); 
+      border-radius: 20px; 
+      transform: perspective(1000px) rotateX(5deg); 
+      box-shadow: 0 15px 40px rgba(255,107,53,0.3);
+    }
+    
+    .badge-content { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px;
+    }
+    
+    .badge-icon { 
+      font-size: 32px; 
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+    }
+    
+    .badge-text { 
+      font-family: 'Fredoka One', cursive; 
+      font-size: 24px; 
+      color: white; 
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    }
+    
+    /* Implementation Guide */
+    .implementation-guide { 
+      background: #f8f9fa; 
+      border-radius: 20px; 
+      padding: 30px; 
+      margin-top: 30px;
+    }
+    
+    .guide-title { 
+      font-size: 22px; 
+      font-weight: 700; 
+      color: #333; 
+      margin-bottom: 20px; 
+      text-align: center;
+    }
+    
+    .code-snippet { 
+      background: #2d3748; 
+      color: #e2e8f0; 
+      padding: 20px; 
+      border-radius: 10px; 
+      font-family: 'Courier New', monospace; 
+      font-size: 14px; 
+      overflow-x: auto; 
+      margin: 15px 0;
+    }
+    
+    /* Usage Examples */
+    .usage-examples { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      gap: 20px; 
+      margin-top: 20px;
+    }
+    
+    .usage-item { 
+      background: white; 
+      padding: 20px; 
+      border-radius: 15px; 
+      text-align: center; 
+      border: 2px solid #e0e0e0; 
+      transition: all 0.3s;
+    }
+    
+    .usage-item:hover { 
+      border-color: #ff6b35; 
+      transform: translateY(-3px);
+    }
+    
+    .usage-size { 
+      font-weight: 600; 
+      color: #333; 
+      margin-bottom: 10px;
+    }
+    
+    /* Header Logo (Small) */
+    .header-logo { 
+      transform: scale(0.7);
+    }
+    
+    /* Footer Logo (Medium) */
+    .footer-logo { 
+      transform: scale(0.9);
+    }
+    
+    /* Splash Logo (Large) */
+    .splash-logo { 
+      transform: scale(1.3);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) { 
+      .logo-grid { 
+        grid-template-columns: 1fr; 
+      } 
+      .showcase-container { 
+        padding: 20px; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="showcase-container">
+    <h1 class="page-title">🍽️ TiffinRush Logo Collection</h1>
+    
+    <div class="logo-grid">
+      <!-- Main Logo -->
+      <div class="logo-card">
+        <h3 class="logo-title">Main Logo (Gradient + Shine)</h3>
+        <div class="tiffin-logo-main">
+          <div class="logo-icon">🍽️</div>
+          <div class="logo-text">TiffinRush</div>
+        </div>
+      </div>
+      
+      <!-- Scooter Logo -->
+      <div class="logo-card">
+        <h3 class="logo-title">Delivery Scooter Version</h3>
+        <div class="tiffin-logo-scooter">
+          <div class="scooter-icon">🛵</div>
+          <div class="scooter-text">TiffinRush</div>
+        </div>
+      </div>
+      
+      <!-- Minimal Logo -->
+      <div class="logo-card">
+        <h3 class="logo-title">Minimal Version</h3>
+        <div class="tiffin-logo-minimal">
+          <div class="minimal-icon">🍛</div>
+          <div class="minimal-text">TiffinRush</div>
+        </div>
+      </div>
+      
+      <!-- Plate Logo -->
+      <div class="logo-card">
+        <h3 class="logo-title">Rotating Plate Version</h3>
+        <div class="tiffin-logo-plate">
+          <div class="plate-icon">🍽️</div>
+          <div class="plate-text">TiffinRush</div>
+        </div>
+      </div>
+      
+      <!-- Badge Logo -->
+      <div class="logo-card">
+        <h3 class="logo-title">3D Badge Style</h3>
+        <div class="tiffin-logo-badge">
+          <div class="badge-content">
+            <div class="badge-icon">🚀</div>
+            <div class="badge-text">TiffinRush</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Usage Examples -->
+    <div class="implementation-guide">
+      <h3 class="guide-title">📱 Usage in Different Sizes</h3>
+      <div class="usage-examples">
+        <div class="usage-item">
+          <div class="usage-size">Header Size</div>
+          <div class="tiffin-logo-main header-logo">
+            <div class="logo-icon">🍽️</div>
+            <div class="logo-text">TiffinRush</div>
+          </div>
+        </div>
+        
+        <div class="usage-item">
+          <div class="usage-size">Normal Size</div>
+          <div class="tiffin-logo-scooter">
+            <div class="scooter-icon">🛵</div>
+            <div class="scooter-text">TiffinRush</div>
+          </div>
+        </div>
+        
+        <div class="usage-item">
+          <div class="usage-size">Splash Screen</div>
+          <div class="tiffin-logo-plate splash-logo">
+            <div class="plate-icon">🍽️</div>
+            <div class="plate-text">TiffinRush</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Implementation Code -->
+      <h4 style="margin: 25px 0 15px 0; font-size: 18px; color: #333;">🔧 Implementation Code:</h4>
+      <div class="code-snippet">
+&lt;!-- Add to your Django template --&gt;
+&lt;div class="tiffin-logo-main"&gt;
+  &lt;div class="logo-icon"&gt;🍽️&lt;/div&gt;
+  &lt;div class="logo-text"&gt;TiffinRush&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- CSS (add to your stylesheet) --&gt;
+.tiffin-logo-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 25px;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #4caf50 100%);
+  border-radius: 50px;
+  box-shadow: 0 8px 30px rgba(255,107,53,0.3);
+}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

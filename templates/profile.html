@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Profile</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding-top: 0;
+        color: #333;
+      }
+      
+      header {
+        background: white;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        padding: 16px 0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      
+      .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .header-brand {
+        font-size: 24px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-decoration: none;
+      }
+      
+      .header-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      
+      .header-btn:hover {
+        background: #764ba2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+      /* Menu-like fixed header (copied styles) */
+      .restaurants-header { 
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #4caf50 100%); 
+        padding: 20px; 
+        box-shadow: 0 8px 32px rgba(255,107,53,0.3); 
+        border-radius: 0 0 30px 30px; 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        right: 0; 
+        z-index: 200; 
+        overflow: hidden;
+      }
+      .restaurants-header::before { 
+        content: ''; 
+        position: absolute; 
+        top: -50%; 
+        right: -10%; 
+        width: 150px; 
+        height: 150px; 
+        background: rgba(255,255,255,0.1); 
+        border-radius: 50%; 
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes float { 
+        0%, 100% { transform: translateY(0px) rotate(0deg); } 
+        50% { transform: translateY(-15px) rotate(180deg); } 
+      }
+      .header-content { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        position: relative; 
+        z-index: 2;
+      }
+      .header-left { display: flex; align-items: center; gap: 15px; }
+      .back-btn { 
+        background: rgba(255,255,255,0.2); 
+        border: none; 
+        border-radius: 50%; 
+        width: 45px; 
+        height: 45px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 20px; 
+        color: white; 
+        cursor: pointer; 
+        transition: all 0.3s;
+      }
+      .page-title { font-size: 22px; font-weight: 700; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+      .header-nav { display: flex; gap: 12px; align-items: center; }
+      .header-nav-btn { 
+        background: rgba(255,255,255,0.18); 
+        border: 2px solid rgba(255,255,255,0.2); 
+        border-radius: 25px; 
+        padding: 8px 14px; 
+        color: white; 
+        text-decoration: none; 
+        font-weight: 600; 
+        font-size: 14px; 
+        transition: all 0.3s; 
+        display: flex; 
+        align-items: center; 
+        gap: 8px;
+      }
+      .cart-badge { 
+        background: #ff6b35; color: white; font-weight: 700; padding: 3px 8px; border-radius: 12px; margin-left:6px; font-size:12px; display:inline-block; }
+      @keyframes badgePulse { 0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)} }
+      .badge-pulse { animation: badgePulse 340ms ease; }
+      /* ensure main content sits below fixed header */
+      .main-container { padding-top: 110px; }
+      
+      .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      
+      .profile-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        margin-bottom: 30px;
+      }
+      
+      .profile-header {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 30px;
+        margin-bottom: 30px;
+      }
+      
+      .avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: 700;
+        flex-shrink: 0;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+      }
+      
+      .user-info h1 {
+        font-size: 32px;
+        margin-bottom: 8px;
+        color: #1a1a1a;
+      }
+      
+      .user-email {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 16px;
+      }
+      
+      .user-stats {
+        display: flex;
+        gap: 30px;
+        margin-top: 20px;
+      }
+      
+      .stat {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #667eea;
+      }
+      
+      .stat-label {
+        font-size: 13px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 4px;
+      }
+      
+      .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #1a1a1a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .section-title::before {
+        content: '';
+        width: 4px;
+        height: 24px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 2px;
+      }
+      
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 30px;
+      }
+      
+      .orders-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .order {
+        background: #f9f9f9;
+        border-left: 4px solid #667eea;
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s;
+      }
+      
+      .order:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+      }
+      
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      
+      .order-id {
+        font-weight: 700;
+        color: #1a1a1a;
+        font-size: 16px;
+      }
+      
+      .order-status {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+      
+      .status-placed { background: #e3f2fd; color: #1976d2; }
+      .status-preparing { background: #fff3e0; color: #f57c00; }
+      .status-delivering { background: #f3e5f5; color: #7b1fa2; }
+      .status-completed { background: #e8f5e9; color: #388e3c; }
+      .status-cancelled { background: #ffebee; color: #c62828; }
+      
+      .order-date {
+        font-size: 13px;
+        color: #999;
+        margin-bottom: 12px;
+      }
+      
+      .order-items {
+        background: white;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+        border: 1px solid #f0f0f0;
+      }
+      
+      .order-item-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 14px;
+        color: #555;
+      }
+      
+      .order-item-row:not(:last-child) {
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      .order-total {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 12px;
+        border-top: 2px solid #f0f0f0;
+        font-weight: 700;
+        color: #667eea;
+      }
+      
+      .cart-section {
+        background: #f9f9f9;
+        border-radius: 12px;
+        padding: 20px;
+      }
+      
+      .cart-item {
+        background: white;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 3px solid #667eea;
+      }
+      
+      .cart-item-name {
+        flex: 1;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+      
+      .cart-item-price {
+        color: #667eea;
+        font-weight: 700;
+      }
+      
+      .saved-section {
+        background: #f9f9f9;
+        border-radius: 12px;
+        padding: 20px;
+      }
+      
+      .saved-item {
+        background: white;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 3px solid #764ba2;
+        transition: all 0.3s;
+      }
+      
+      .saved-item:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      }
+      
+      .saved-item-info {
+        flex: 1;
+      }
+      
+      .saved-item-name {
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 4px;
+      }
+      
+      .saved-item-price {
+        font-size: 14px;
+        color: #667eea;
+        font-weight: 700;
+      }
+      
+      .btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s;
+      }
+      
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+      
+      .btn-small {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+      }
+      
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+      }
+      
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: #999;
+      }
+      
+      @media (max-width: 768px) {
+        .grid { grid-template-columns: 1fr; }
+        .profile-header { flex-direction: column; gap: 20px; }
+        .user-stats { flex-direction: column; gap: 16px; }
+        .profile-card { padding: 20px; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Menu-style header matching menu.html -->
+    <header class="restaurants-header">
+      <div class="header-content">
+        <div class="header-left">
+          <button class="back-btn" onclick="history.back()">←</button>
+          <h1 class="page-title">👤 Profile</h1>
+        </div>
+        <nav class="header-nav">
+          <a href="/" class="header-nav-btn">🏠 Home</a>
+          <a href="/cart/" class="header-nav-btn">🛒 Cart <span id="cart-badge" class="cart-badge">0</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="main-container">
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="avatar" id="avatar">U</div>
+          <div class="user-info">
+            <h1 id="user-name">User Name</h1>
+            <div class="user-email" id="user-email">user@example.com</div>
+            <div class="user-stats">
+              <div class="stat">
+                <span class="stat-value" id="order-count">0</span>
+                <span class="stat-label">Orders</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="total-spent">₹0</span>
+                <span class="stat-label">Total Spent</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="saved-count">0</span>
+                <span class="stat-label">Saved Items</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <div class="profile-card">
+            <h2 class="section-title">📦 Purchase History</h2>
+            <div id="orders" class="orders-section">
+              <div class="loading">Loading your orders…</div>
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <h2 class="section-title">🛒 Shopping Cart</h2>
+            <div id="cart-list" class="cart-section">
+              <div class="loading">Loading cart…</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="profile-card">
+            <h2 class="section-title">❤️ Saved Items</h2>
+            <div id="saved-list" class="saved-section">
+              <div class="loading">Loading saved items…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const apiProfile = '/api/profile/';
+      const apiSaved = '/api/profile/saved/';
+
+      async function fetchProfile() {
+        try {
+          const res = await fetch(apiProfile, { credentials: 'same-origin' });
+          const data = await res.json();
+          if (!data.success) return;
+
+          const user = data.user;
+          if (user) {
+            document.getElementById('user-name').textContent = user.name || user.username || 'User';
+            document.getElementById('user-email').textContent = user.email || '';
+            const avatar = document.getElementById('avatar');
+            avatar.textContent = (user.name || user.username || 'U').charAt(0).toUpperCase();
+          }
+
+          // Orders
+          const orders = data.orders || [];
+          document.getElementById('order-count').textContent = orders.length;
+
+          const totalSpent = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+          document.getElementById('total-spent').textContent = '₹' + totalSpent.toLocaleString('en-IN');
+
+          const ordersEl = document.getElementById('orders');
+          if (orders.length === 0) {
+            ordersEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No orders yet. Start shopping!</p></div>';
+          } else {
+            ordersEl.innerHTML = '';
+            orders.forEach(o => {
+              const orderDiv = document.createElement('div');
+              orderDiv.className = 'order';
+
+              const header = document.createElement('div');
+              header.className = 'order-header';
+              const id = document.createElement('div');
+              id.className = 'order-id';
+              id.textContent = `Order #${o.id}`;
+              const status = document.createElement('span');
+              status.className = `order-status status-${o.status}`;
+              status.textContent = o.status.charAt(0).toUpperCase() + o.status.slice(1);
+              header.appendChild(id);
+              header.appendChild(status);
+
+              const date = document.createElement('div');
+              date.className = 'order-date';
+              date.textContent = new Date(o.created_at).toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+
+              const items = document.createElement('div');
+              items.className = 'order-items';
+              o.items.forEach(it => {
+                const row = document.createElement('div');
+                row.className = 'order-item-row';
+                row.innerHTML = `
+                  <span>${it.qty}× ${it.name}</span>
+                  <span>₹${(it.price * it.qty).toLocaleString('en-IN')}</span>
+                `;
+                items.appendChild(row);
+              });
+
+              const total = document.createElement('div');
+              total.className = 'order-total';
+              total.innerHTML = `
+                <span>Total:</span>
+                <span>₹${o.total.toLocaleString('en-IN')}</span>
+              `;
+              items.appendChild(total);
+
+              orderDiv.appendChild(header);
+              orderDiv.appendChild(date);
+              orderDiv.appendChild(items);
+              ordersEl.appendChild(orderDiv);
+            });
+          }
+
+          // Cart
+          const cart = data.cart || [];
+          // Update cart badge in header
+          const cartBadgeEl = document.getElementById('cart-badge');
+          cartBadgeEl.textContent = cart.length;
+          if (cart.length > 0) {
+            cartBadgeEl.style.display = 'inline-block';
+          } else {
+            cartBadgeEl.style.display = 'none';
+          }
+          const cartEl = document.getElementById('cart-list');
+          if (cart.length === 0) {
+            cartEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🛒</div><p>Your cart is empty</p></div>';
+          } else {
+            cartEl.innerHTML = '';
+            cart.forEach(c => {
+              const item = document.createElement('div');
+              item.className = 'cart-item';
+              item.innerHTML = `
+                <div class="cart-item-name">${c.qty}× ${c.name}</div>
+                <div class="cart-item-price">₹${(c.price * c.qty).toLocaleString('en-IN')}</div>
+              `;
+              cartEl.appendChild(item);
+            });
+          }
+
+          // Saved Items
+          const saved = data.saved || [];
+          document.getElementById('saved-count').textContent = saved.length;
+          const savedEl = document.getElementById('saved-list');
+          if (saved.length === 0) {
+            savedEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📌</div><p>No saved items yet</p></div>';
+          } else {
+            savedEl.innerHTML = '';
+            saved.forEach(s => {
+              const item = document.createElement('div');
+              item.className = 'saved-item';
+              item.innerHTML = `
+                <div class="saved-item-info">
+                  <div class="saved-item-name">${s.name}</div>
+                  <div class="saved-item-price">₹${s.price.toLocaleString('en-IN')}</div>
+                </div>
+                <button class="btn btn-small" onclick="removeSaved(${s.id}, event)">Remove</button>
+              `;
+              savedEl.appendChild(item);
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function removeSaved(id, event) {
+        event.preventDefault();
+        try {
+          const res = await fetch(apiSaved, {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+          });
+          const data = await res.json();
+          if (data.success) fetchProfile();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+          window.location.href = '/logout/';
+        }
+      }
+
+      // Initial fetch and polling every 2 seconds for real-time updates
+      fetchProfile();
+      setInterval(fetchProfile, 2000);
+    </script>
+  </body>
+</html>

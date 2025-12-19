@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Status - Foodie Express</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+  <script src="{% static 'script.js' %}"></script>
+</head>
+<body class="expensive-bg">
+  <header class="expensive-header">
+    <div class="container">
+      <h1>🚚 Order Tracking</h1>
+      <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="menu.html">🍽️ Menu</a>
+        <a href="cart.html">🛒 Cart</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="tracking-section">
+      <h2 class="section-title">Track Your Order</h2>
+      <p class="expensive-status">Thank you for ordering with <strong>Foodie Express</strong>! Here's your order progress:</p>
+
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress" style="width: 75%;"></div>
+        </div>
+        <ul class="progress-steps">
+          <li class="completed">✅ Order Placed</li>
+          <li class="completed">👨‍🍳 Preparing</li>
+          <li class="active">🛵 Out for Delivery</li>
+          <li>📬 Delivered</li>
+        </ul>
+      </div>
+
+      <div class="delivery-info">
+        <p>⏱️ <strong>Estimated Delivery:</strong> 30 minutes</p>
+        <p>📍 <strong>Current Status:</strong> Your rider is on the way!</p>
+      </div>
+
+      <div class="action-buttons">
+        <button class="expensive-btn" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+        <button class="expensive-btn" onclick="window.location.href='menu.html'">🍽️ Order More</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

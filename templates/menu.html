@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu - TiffinRush</title>
+  {% load static %}
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reuse global styles from restaurants page to ensure exact design consistency */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      min-height: 100vh; 
+    }
+
+    /* Header (same gradient & size as restaurants) */
+    .restaurants-header { 
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #4caf50 100%); 
+      padding: 20px; 
+      box-shadow: 0 8px 32px rgba(255,107,53,0.3); 
+      border-radius: 0 0 30px 30px; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      z-index: 200; 
+      overflow: hidden;
+    }
+    .restaurants-header::before { 
+      content: ''; 
+      position: absolute; 
+      top: -50%; 
+      right: -10%; 
+      width: 150px; 
+      height: 150px; 
+      background: rgba(255,255,255,0.1); 
+      border-radius: 50%; 
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float { 
+      0%, 100% { transform: translateY(0px) rotate(0deg); } 
+      50% { transform: translateY(-15px) rotate(180deg); } 
+    }
+    .header-content { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      position: relative; 
+      z-index: 2;
+    }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .back-btn { 
+      background: rgba(255,255,255,0.2); 
+      border: none; 
+      border-radius: 50%; 
+      width: 45px; 
+      height: 45px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 20px; 
+      color: white; 
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .page-title { font-size: 28px; font-weight: 700; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .header-nav { display: flex; gap: 15px; align-items: center; }
+    .header-nav-btn { 
+      background: rgba(255,255,255,0.2); 
+      border: 2px solid rgba(255,255,255,0.3); 
+      border-radius: 25px; 
+      padding: 8px 15px; 
+      color: white; 
+      text-decoration: none; 
+      font-weight: 600; 
+      font-size: 14px; 
+      transition: all 0.3s; 
+      display: flex; 
+      align-items: center; 
+      gap: 5px;
+    }
+    .cart-badge { 
+      background: #ff6b35; color: white; font-weight: 700; padding: 3px 8px; border-radius: 12px; margin-left:6px; font-size:12px; display:inline-block; }
+    @keyframes badgePulse { 0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)} }
+    .badge-pulse { animation: badgePulse 340ms ease; }
+    .cart-panel { position: fixed; top: 80px; right: 16px; width: 320px; max-height: 60vh; overflow:auto; background:white; border-radius:12px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); z-index:400; display:none; }
+    .cart-panel header{ padding:12px 14px; font-weight:700; border-bottom:1px solid #f0f0f0; }
+    .cart-item{ display:flex; gap:10px; padding:10px 14px; align-items:center; border-bottom:1px solid #fafafa; }
+    .cart-item img{ width:54px; height:54px; object-fit:cover; border-radius:8px; }
+  .cart-img-placeholder{ width:54px; height:54px; display:flex; align-items:center; justify-content:center; border-radius:8px; background:#f5f5f5; font-size:18px; }
+    .cart-empty{ padding:18px; color:#666; }
+    .cart-footer{ padding:12px; display:flex; justify-content:space-between; align-items:center; }
+    .checkout-btn{ background:linear-gradient(45deg,#ff6b35,#4caf50); color:white; border:none; padding:10px 14px; border-radius:10px; font-weight:700; }
+  /* fly-to-cart animation */
+  .fly-img{ position:fixed; width:60px; height:60px; pointer-events:none; z-index:1200; border-radius:8px; transition: transform 0.7s ease-in-out, opacity 0.7s; }
+
+  /* modal for checkout summary */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:1200; }
+  .modal{ background:white; width:420px; max-width:92%; border-radius:12px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,0.28); }
+  .modal h3{ margin-bottom:8px }
+  .modal .modal-items{ max-height:320px; overflow:auto; margin-bottom:12px }
+  .modal .modal-item{ display:flex; justify-content:space-between; gap:8px; padding:8px 0; border-bottom:1px solid #f3f3f3 }
+  .modal .modal-total{ font-weight:800; font-size:18px; text-align:right; margin-bottom:12px }
+  .modal .btn-primary{ background:linear-gradient(45deg,#ff6b35,#4caf50); color:white; border:none; padding:10px 14px; border-radius:8px; font-weight:700; cursor:pointer }
+
+    /* Search & Filter Section */
+    .search-filter-section { padding: 20px; }
+    .search-bar { 
+      width: 100%; 
+      padding: 15px 20px; 
+      border: none; 
+      border-radius: 25px; 
+      font-size: 16px; 
+      background: white; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+      margin-bottom: 20px; 
+      transition: all 0.3s;
+    }
+    .search-bar:focus { outline: none; box-shadow: 0 8px 30px rgba(0,0,0,0.15); transform: translateY(-2px); }
+
+    .filter-tabs { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; margin-bottom: 20px; }
+    .filter-tabs::-webkit-scrollbar { display: none; }
+    .filter-tab { 
+      min-width: 90px; 
+      padding: 10px 18px; 
+      background: white; 
+      border: none; 
+      border-radius: 25px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      text-align: center; 
+      transition: all 0.3s; 
+      font-size: 14px;
+    }
+    .filter-tab.active { background: linear-gradient(45deg, #ff6b35, #4caf50); color: white; }
+
+    /* Menu grid layout: cards */
+    /* keep main content below fixed header */
+    .main-content { padding-top: 110px; }
+    .menu-container { padding: 0 20px 140px; }
+    .cards-grid { display: grid; gap: 20px; grid-template-columns: repeat(3, 1fr); }
+
+    .food-card { background: white; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12); display:flex; flex-direction:column; transition: all 0.28s ease; }
+    .food-card:hover { transform: translateY(-8px); box-shadow: 0 28px 60px rgba(0,0,0,0.18); }
+
+    .food-image { width:100%; height:160px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fddb92 100%); }
+    .food-image img, .food-image .image-placeholder { width:100%; height:100%; object-fit:cover; display:block; }
+
+    .food-body { padding: 14px 14px 12px; display:flex; flex-direction:column; gap:8px; flex:1; }
+    .food-title { font-size:16px; font-weight:700; color:#333; }
+    .food-desc { font-size:13px; color:#666; }
+    .food-meta { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:auto; }
+    .food-left { display:flex; flex-direction:column; gap:6px; }
+    .price { font-weight:800; color:#333; }
+    .rating { color:#ffd700; font-weight:700; }
+
+    .card-action { display:flex; justify-content:flex-end; padding: 0 14px 14px; }
+    .add-cart { background: linear-gradient(45deg, #ff6b35, #4caf50); color: white; border: none; padding: 10px 14px; border-radius: 12px; font-weight:700; cursor:pointer; transition: all 0.22s; }
+    .add-cart:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,107,53,0.28); }
+
+    /* Responsive grid: 2 columns for tablet/mobile as requested */
+    @media (max-width: 1024px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } .food-image{height:140px} }
+
+    /* Bottom Navigation (identical) */
+    .bottom-nav { 
+      position: fixed; bottom: 0; left: 0; right: 0; 
+      background: white; padding: 12px 0 8px; box-shadow: 0 -8px 30px rgba(0,0,0,0.1); display: flex; justify-content: space-around; border-radius: 25px 25px 0 0; z-index: 100; }
+    .nav-item { text-align: center; color: #666; text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.3s; padding: 5px; }
+    .nav-item.active { color: #ff6b35; transform: scale(1.1); }
+    .nav-icon { font-size: 24px; margin-bottom: 4px; }
+
+    /* Responsive tweaks */
+    @media (max-width:768px){ .menu-image{ width:90px; height:70px } .dish-name{ font-size:17px } }
+    @media (max-width:480px){ .menu-item{ padding:10px } .menu-image{ width:76px;height:64px } }
+  </style>
+</head>
+<body>
+  <!-- Header (same layout) -->
+  <header class="restaurants-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button class="back-btn" onclick="history.back()">←</button>
+        <h1 class="page-title">📋 Menu</h1>
+      </div>
+      <nav class="header-nav">
+        <a href="/" class="header-nav-btn">🏠 Home</a>
+        <a href="/cart/" class="header-nav-btn">🛒 Cart</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Search & Filters -->
+  <div class="main-content">
+  <div class="search-filter-section">
+    <input type="text" class="search-bar" placeholder="Search dishes or cuisines..." id="menuSearch">
+
+    <div class="filter-tabs" id="menuFilters">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="veg">Veg</button>
+      <button class="filter-tab" data-filter="non-veg">Non-Veg</button>
+      <button class="filter-tab" data-filter="pizza">Pizza</button>
+      <button class="filter-tab" data-filter="burger">Burger</button>
+      <button class="filter-tab" data-filter="indian">Indian</button>
+      <button class="filter-tab" data-filter="chinese">Chinese</button>
+      <button class="filter-tab" data-filter="desserts">Desserts</button>
+      <button class="filter-tab" data-filter="beverages">Beverages</button>
+    </div>
+  </div>
+
+  <!-- Menu Grid -->
+  <div class="menu-container">
+    <div class="cards-grid" id="cardsGrid">
+      <!-- Cards will be generated by JavaScript to create 50 items -->
+    </div>
+  </div>
+
+  <!-- Bottom Navigation (same as restaurants) -->
+  <nav class="bottom-nav">
+    <a href="/" class="nav-item">
+      <div class="nav-icon">🏠</div>
+      <div>Home</div>
+    </a>
+    <a href="/restaurants/" class="nav-item">
+      <div class="nav-icon">🍽️</div>
+      <div>Restaurants</div>
+    </a>
+    <a href="/menu/" class="nav-item active">
+      <div class="nav-icon">📋</div>
+      <div>Menu</div>
+    </a>
+    <a href="/track/" class="nav-item">
+      <div class="nav-icon">🚚</div>
+      <div>Track</div>
+    </a>
+    <a href="/profile/" class="nav-item">
+      <div class="nav-icon">👤</div>
+      <div>Profile</div>
+    </a>
+  </nav>
+
+  <!-- Cart Panel -->
+  <div class="cart-panel" id="cartPanel">
+    <header>My Cart</header>
+    <div id="cartContent">
+      <div class="cart-empty">Your cart is empty</div>
+    </div>
+    <div class="cart-footer">
+      <div id="cartTotal">Total: ₹0</div>
+      <button class="checkout-btn">Checkout</button>
+    </div>
+  </div>
+
+  <script>
+    // expose Django CSRF token for fetch requests
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    const CSRF_TOKEN = getCookie('csrftoken');
+    // --- Dynamic card generation and interactive behaviors ---
+    const categories = ['veg','non-veg','pizza','burger','indian','chinese','beverages','desserts'];
+    const sampleNames = ['Deluxe','Classic','Spicy','Grilled','Cheesy','Crispy','Smoky','Herb','Tangy','Buttery'];
+    const sampleDishes = ['Margherita Pizza','Paneer Butter Masala','Chicken Tikka','Veg Burger','Schezwan Noodles','Chocolate Brownie','Iced Latte','Masala Dosa','Cheese Burst','Sushi Roll'];
+
+    function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+    function makeCard(i){
+      const cat = categories[rand(0,categories.length-1)];
+      const name = `${sampleNames[rand(0,sampleNames.length-1)]} ${sampleDishes[rand(0,sampleDishes.length-1)]}`;
+      const desc = ['Indian, spicy','Continental','Fast Food','Dessert','Beverage','Chinese, Hakka','Grilled Special'][rand(0,6)];
+      const price = rand(120,350);
+      const rating = (Math.random()*1.6+3.4).toFixed(1); // 3.4 - 5.0
+
+      const card = document.createElement('div');
+      card.className = 'food-card';
+      card.dataset.category = cat;
+
+      card.innerHTML = `
+        <div class="food-image"><div class="image-placeholder">🍽️</div></div>
+        <div class="food-body">
+          <div class="food-title">${name}</div>
+          <div class="food-desc">${desc}</div>
+          <div class="food-meta">
+            <div class="food-left">
+              <div class="price">₹${price}</div>
+              <div class="rating">${'★'.repeat(Math.round(rating))} ${'☆'.repeat(5-Math.round(rating))} <span style="color:#333;margin-left:6px;font-weight:700;">${rating}</span></div>
+            </div>
+            <div class="delivery">${rand(10,40)}- ${rand(20,55)} min</div>
+          </div>
+        </div>
+        <div class="card-action"><button class="add-cart add-to-cart" data-name="${name}" data-price="${price}" data-image="">Add to Cart</button></div>
+      `;
+
+      return card;
+    }
+
+    // generate 50 cards
+    const grid = document.getElementById('cardsGrid');
+    for(let i=0;i<50;i++){ grid.appendChild(makeCard(i)); }
+
+    // search
+    document.getElementById('menuSearch').addEventListener('input', function(e){
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.food-card').forEach(card => {
+        const title = card.querySelector('.food-title').textContent.toLowerCase();
+        const desc = card.querySelector('.food-desc').textContent.toLowerCase();
+        card.style.display = (title.includes(q) || desc.includes(q)) ? 'flex' : 'none';
+      });
+    });
+
+    // filters
+    document.querySelectorAll('#menuFilters .filter-tab').forEach(tab => {
+      tab.addEventListener('click', function(){
+        document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        const filter = tab.dataset.filter;
+        document.querySelectorAll('.food-card').forEach(card=>{
+          const cats = card.dataset.category;
+          card.style.display = (filter==='all' || cats.includes(filter)) ? 'flex' : 'none';
+        });
+      });
+    });
+
+    // Cart management: use localStorage for persistence + best-effort sync to server
+    function loadLocalCart(){
+      try{ return JSON.parse(localStorage.getItem('tiffin_cart')||'[]'); }catch(e){ return []; }
+    }
+    function saveLocalCart(cart){ localStorage.setItem('tiffin_cart', JSON.stringify(cart)); }
+
+    async function fetchCart(){
+      try{
+        const res = await fetch('/api/cart/');
+        return await res.json();
+      }catch(e){ return {success:false, cart: loadLocalCart(), total_qty: (loadLocalCart().reduce((s,i)=>s+(i.qty||1),0)), total_price: (loadLocalCart().reduce((s,i)=>s+(i.price*(i.qty||1)),0))}; }
+    }
+
+    async function addToCartAPI(item){
+      try{
+        const res = await fetch('/api/cart/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': CSRF_TOKEN || ''
+          },
+          body: JSON.stringify(Object.assign({action:'add'}, item))
+        });
+        return await res.json();
+      }catch(e){ return {success:false}; }
+    }
+
+    // update local cart and attempt to sync with server
+    async function addToLocalCart(item){
+      const cart = loadLocalCart();
+      const existing = cart.find(ci=>ci.name===item.name && ci.price==item.price);
+      if(existing){ existing.qty = (existing.qty||1) + (item.qty||1); } else { cart.push(Object.assign({qty: item.qty||1}, item)); }
+      saveLocalCart(cart);
+      // best-effort server sync
+      try{ await addToCartAPI(item); }catch(e){}
+      return cart;
+    }
+
+    async function removeFromCartAPI(item){
+      try{
+        const res = await fetch('/api/cart/', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json','X-CSRFToken': CSRF_TOKEN || ''},
+          body: JSON.stringify(Object.assign({action:'remove'}, item))
+        });
+        return await res.json();
+      }catch(e){ return {success:false}; }
+    }
+
+    async function removeFromLocalCart(item){
+      const cart = loadLocalCart();
+      const existing = cart.find(ci=>ci.name===item.name && ci.price==item.price);
+      if(existing){ existing.qty = (existing.qty||1) - 1; if(existing.qty<=0){ const idx = cart.findIndex(ci=>ci.name===item.name && ci.price==item.price); if(idx!==-1) cart.splice(idx,1); } }
+      saveLocalCart(cart);
+      try{ await removeFromCartAPI(item); }catch(e){}
+      return cart;
+    }
+
+    async function clearCartAPI(){
+      try{
+        const res = await fetch('/api/cart/', { method:'DELETE', headers: {'X-CSRFToken': CSRF_TOKEN || ''} });
+        return await res.json();
+      }catch(e){ return {success:false}; }
+    }
+
+    async function checkoutAPI(){
+      try{
+        const res = await fetch('/api/cart/checkout/', { method:'POST', headers: {'X-CSRFToken': CSRF_TOKEN || ''} });
+        return await res.json();
+      }catch(e){ return {success:false}; }
+    }
+
+    // UI helpers
+    function updateCartBadge(count){
+      document.getElementById('cartCount').textContent = count;
+      const badge = document.getElementById('cartCount');
+      badge.classList.remove('badge-pulse'); void badge.offsetWidth; badge.classList.add('badge-pulse');
+    }
+
+    // fly animation when adding
+    function flyToCartAnimation(fromEl){
+      try{
+        const rect = fromEl.getBoundingClientRect();
+        const img = document.createElement('div'); img.className='fly-img'; img.innerHTML='🍽️';
+        document.body.appendChild(img);
+        img.style.left = rect.left + 'px'; img.style.top = rect.top + 'px'; img.style.opacity = 1;
+        const cartIcon = document.getElementById('cartToggle');
+        const cartRect = cartIcon.getBoundingClientRect();
+        requestAnimationFrame(()=>{
+          img.style.transform = `translate(${cartRect.left-rect.left}px, ${cartRect.top-rect.top}px) scale(0.3)`;
+          img.style.opacity = 0.2;
+        });
+        setTimeout(()=>img.remove(), 800);
+      }catch(e){ /* ignore */ }
+    }
+
+    async function renderCartFromServer(){
+      const data = await fetchCart();
+      const container = document.getElementById('cartContent');
+      const cart = (data && data.success && data.cart) ? data.cart : loadLocalCart();
+      if(!cart || !cart.length){ container.innerHTML = '<div class="cart-empty">Your cart is empty</div>'; document.getElementById('cartTotal').textContent='Total: ₹0'; document.getElementById('cartTotalHeader').textContent='₹0'; updateCartBadge(0); return; }
+      container.innerHTML = '';
+      let total = 0;
+      cart.forEach(item=>{
+        total += item.price * (item.qty||1);
+        const row = document.createElement('div'); row.className='cart-item';
+        const imgHtml = item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none'"/>` : `<div class="cart-img-placeholder">🍽️</div>`;
+        // include decrement and remove controls
+        row.innerHTML = imgHtml + `
+          <div style="flex:1">
+            <div style="font-weight:700">${item.name}</div>
+            <div style="color:#666;font-size:13px">₹${item.price} x <span class="item-qty">${item.qty||1}</span></div>
+            <div style="margin-top:6px; display:flex; gap:8px;">
+              <button class="qty-decrease" data-name="${item.name}" data-price="${item.price}">−</button>
+              <button class="qty-increase" data-name="${item.name}" data-price="${item.price}">+</button>
+              <button class="remove-item" data-name="${item.name}" data-price="${item.price}" style="color:#b00;">Remove</button>
+            </div>
+          </div>`;
+        container.appendChild(row);
+      });
+      document.getElementById('cartTotal').textContent = `Total: ₹${total}`;
+      document.getElementById('cartTotalHeader').textContent = `₹${total}`;
+      updateCartBadge(data.total_qty || cart.reduce((s,i)=>s+(i.qty||1),0));
+    }
+
+    // add-to-cart handling using event delegation -> call API
+    document.addEventListener('click', async function(e){
+      if(e.target && e.target.classList && e.target.classList.contains('add-to-cart')){
+        const name = e.target.dataset.name;
+        const price = parseInt(e.target.dataset.price,10)||0;
+        const image = e.target.dataset.image || '';
+        flyToCartAnimation(e.target);
+        const local = await addToLocalCart({name, price, image, qty:1});
+        renderCartFromServer();
+        showToast('Item added to cart successfully!');
+      }
+
+      // increase quantity (cart control)
+      if(e.target && e.target.classList && e.target.classList.contains('qty-increase')){
+        const name = e.target.dataset.name;
+        const price = parseInt(e.target.dataset.price,10)||0;
+        const resp = await addToCartAPI({name, price, qty:1});
+        if(resp && resp.success){ renderCartFromServer(); }
+      }
+
+      // decrease quantity (cart control)
+      if(e.target && e.target.classList && e.target.classList.contains('qty-decrease')){
+        const name = e.target.dataset.name;
+        const price = parseInt(e.target.dataset.price,10)||0;
+        const local = await removeFromLocalCart({name, price});
+        renderCartFromServer();
+      }
+
+      // remove item completely (set qty to 0 via update)
+      if(e.target && e.target.classList && e.target.classList.contains('remove-item')){
+        const name = e.target.dataset.name;
+        const price = parseInt(e.target.dataset.price,10)||0;
+        // call update with qty 0
+        try{
+          const res = await fetch('/api/cart/', { method: 'PATCH', headers: {'Content-Type':'application/json','X-CSRFToken': CSRF_TOKEN || ''}, body: JSON.stringify({action:'update', name, price, qty:0}) });
+          const j = await res.json(); if(j && j.success){ renderCartFromServer(); }
+        }catch(e){ console.error(e); }
+      }
+
+      // open checkout modal
+      if(e.target && e.target.classList && e.target.classList.contains('open-checkout')){
+        e.preventDefault(); openCheckoutModal();
+      }
+    });
+
+    // reuse showToast from earlier
+    function showToast(message){
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position: fixed; top: 100px; right: 20px; z-index: 1000; background: linear-gradient(45deg, #4caf50, #8bc34a); color: white; padding: 12px 20px; border-radius: 25px; font-weight: 600; font-size: 14px; transform: translateX(100%); transition: all 0.3s; box-shadow: 0 8px 30px rgba(76,175,80,0.3);';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(()=>toast.style.transform='translateX(0)',100);
+      setTimeout(()=>toast.style.transform='translateX(100%)',2600);
+      setTimeout(()=>toast.remove(),3000);
+    }
+
+    // cart panel toggle
+    document.getElementById('cartToggle').addEventListener('click', function(e){ e.preventDefault(); const p=document.getElementById('cartPanel'); p.style.display = p.style.display==='block' ? 'none' : 'block'; renderCartFromServer(); });
+
+    // checkout flow
+    document.querySelector('.checkout-btn').addEventListener('click', async function(){
+      const res = await checkoutAPI();
+      if(res && res.success){ renderCartFromServer(); showToast('Order placed — check Orders page'); } else { showToast(res && res.message ? res.message : 'Checkout failed'); }
+    });
+
+    // initialize cart from server
+    renderCartFromServer();
+
+    // Checkout modal functions
+    function createCheckoutModal(){
+      let overlay = document.createElement('div'); overlay.className='modal-overlay'; overlay.id='checkoutOverlay';
+      overlay.innerHTML = `
+        <div class="modal">
+          <h3>Order Summary</h3>
+          <div class="modal-items" id="modalItems"></div>
+          <div class="modal-total" id="modalTotal">Total: ₹0</div>
+          <div style="display:flex;gap:8px; justify-content:flex-end"><button class="btn-primary" id="proceedPayment">Proceed to Payment</button><button id="closeModal">Close</button></div>
+        </div>`;
+      document.body.appendChild(overlay);
+      document.getElementById('closeModal').addEventListener('click', ()=>overlay.style.display='none');
+      document.getElementById('proceedPayment').addEventListener('click', async ()=>{
+        // call checkout API, then clear localStorage and close modal
+        const res = await checkoutAPI();
+        if(res && res.success){ localStorage.removeItem('tiffin_cart'); renderCartFromServer(); overlay.style.display='none'; showToast('Order placed successfully!'); }
+        else{ showToast(res && res.message ? res.message : 'Checkout failed'); }
+      });
+    }
+
+    function openCheckoutModal(){
+      const overlay = document.getElementById('checkoutOverlay') || (createCheckoutModal(), document.getElementById('checkoutOverlay'));
+      const itemsEl = document.getElementById('modalItems'); itemsEl.innerHTML='';
+      const cart = loadLocalCart(); if(!cart.length){ itemsEl.innerHTML='<div style="padding:12px;color:#666">Cart is empty</div>'; document.getElementById('modalTotal').textContent='Total: ₹0'; overlay.style.display='flex'; return; }
+      let total=0;
+      cart.forEach(it=>{ total += it.price*(it.qty||1); const row=document.createElement('div'); row.className='modal-item'; row.innerHTML = `<div>${it.name} x ${it.qty||1}</div><div>₹${it.price*(it.qty||1)}</div>`; itemsEl.appendChild(row); });
+      document.getElementById('modalTotal').textContent = `Total: ₹${total}`;
+      overlay.style.display='flex';
+    }
+
+    // open checkout modal when clicking checkout in cart-panel
+    document.querySelector('.checkout-btn').addEventListener('click', function(e){ e.preventDefault(); openCheckoutModal(); });
+  </script>
+</body>
+</html>
