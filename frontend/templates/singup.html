@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup - TiffinRush</title>
+  {% load static %}
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .auth-container { 
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(30px) saturate(200%);
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,0.95);
+      padding: 50px 45px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 
+        0 30px 100px rgba(0, 0, 0, 0.04),
+        0 15px 35px rgba(102, 126, 234, 0.3),
+        inset 0 1px 0 rgba(255,255,255,0.98);
+      position: static;
+      z-index: 1;
+      animation: slideUp 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes slideUp {
+      from { 
+        transform: translateY(80px) scale(0.92); 
+        opacity: 0; 
+      }
+      to { 
+        transform: translateY(0) scale(1); 
+        opacity: 1; 
+      }
+    }
+    
+    .auth-header { 
+      text-align: center; 
+      margin-bottom: 40px; 
+    }
+    
+    .brand-logo { 
+      font-size: 48px; 
+      margin-bottom: 15px; 
+    }
+    
+    .auth-title { 
+      font-size: 28px; 
+      font-weight: 700; 
+      color: #333; 
+      margin-bottom: 8px; 
+    }
+    
+    .auth-subtitle { 
+      font-size: 14px; 
+      color: #666; 
+      font-weight: 500; 
+    }
+    
+    .form-group { 
+      margin-bottom: 20px; 
+    }
+    
+    .form-label { 
+      font-size: 14px; 
+      font-weight: 600; 
+      color: #333; 
+      margin-bottom: 8px; 
+      display: block; 
+    }
+    
+    .form-input { 
+      width: 100%; 
+      padding: 14px 16px; 
+      border: 1.5px solid #e0e0e0; 
+      border-radius: 12px; 
+      font-size: 15px; 
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      background: #f9f9f9;
+    }
+    
+    .form-input:focus { 
+      outline: none; 
+      border-color: #667eea; 
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .signup-btn { 
+      width: 100%; 
+      padding: 14px; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+      border: none; 
+      border-radius: 12px; 
+      font-size: 16px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    .signup-btn:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .signup-btn:active { 
+      transform: translateY(0); 
+    }
+    
+    .signup-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .login-link { 
+      text-align: center; 
+      margin-top: 20px; 
+      font-size: 14px; 
+      color: #666; 
+    }
+    
+    .login-link a { 
+      color: #667eea; 
+      font-weight: 600; 
+      text-decoration: none; 
+      transition: all 0.3s;
+    }
+    
+    .login-link a:hover { 
+      color: #764ba2; 
+      text-decoration: underline;
+    }
+    
+    .error-message { 
+      color: #e74c3c; 
+      font-size: 13px; 
+      margin-top: 5px; 
+      display: none;
+    }
+    
+    .error-message.show { 
+      display: block; 
+    }
+    
+    .success-message { 
+      color: #27ae60; 
+      font-size: 13px; 
+      margin-top: 5px; 
+      display: none;
+    }
+    
+    .success-message.show { 
+      display: block; 
+    }
+    
+    .loading-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <div class="brand-logo">🍕</div>
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">Join us and enjoy delicious food delivery</p>
+    </div>
+    
+    <form id="signupForm">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="fullName" class="form-input" placeholder="Enter your full name" required>
+        <div class="error-message" id="nameError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="Enter your email" required>
+        <div class="error-message" id="emailError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" id="phone" class="form-input" placeholder="Enter your phone number" required>
+        <div class="error-message" id="phoneError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Address</label>
+        <input type="text" id="address" class="form-input" placeholder="Enter your address" required>
+        <div class="error-message" id="addressError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="Enter password (min 6 characters)" required>
+        <div class="error-message" id="passwordError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your password" required>
+        <div class="error-message" id="confirmPasswordError"></div>
+      </div>
+      
+      <button type="submit" class="signup-btn" id="signupBtn">
+        <span id="btnText">Create Account</span>
+        <div class="loading-spinner" id="spinner"></div>
+      </button>
+      
+      <div class="success-message" id="successMessage">Account created successfully! Redirecting...</div>
+      <div class="error-message" id="formError"></div>
+      
+      <div class="login-link">
+        Already have an account? <a href="/login/">Login here</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Get form values
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      // Clear previous errors
+      document.querySelectorAll('.error-message, .success-message').forEach(el => el.classList.remove('show'));
+      
+      // Validation
+      if (!fullName) {
+        document.getElementById('nameError').textContent = 'Full name is required';
+        document.getElementById('nameError').classList.add('show');
+        return;
+      }
+      
+      if (!email || !email.includes('@')) {
+        document.getElementById('emailError').textContent = 'Valid email is required';
+        document.getElementById('emailError').classList.add('show');
+        return;
+      }
+      
+      if (!phone || phone.length < 10) {
+        document.getElementById('phoneError').textContent = 'Valid phone number is required';
+        document.getElementById('phoneError').classList.add('show');
+        return;
+      }
+      
+      if (!address) {
+        document.getElementById('addressError').textContent = 'Address is required';
+        document.getElementById('addressError').classList.add('show');
+        return;
+      }
+      
+      if (!password || password.length < 6) {
+        document.getElementById('passwordError').textContent = 'Password must be at least 6 characters';
+        document.getElementById('passwordError').classList.add('show');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+        document.getElementById('confirmPasswordError').classList.add('show');
+        return;
+      }
+      
+      // Show loading
+      document.getElementById('btnText').style.display = 'none';
+      document.getElementById('spinner').style.display = 'block';
+      document.getElementById('signupBtn').disabled = true;
+      
+      try {
+        const response = await fetch('/api/signup/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify({
+            name: fullName,
+            email: email,
+            phone: phone,
+            address: address,
+            password: password
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          document.getElementById('successMessage').textContent = data.message || 'Account created successfully!';
+          document.getElementById('successMessage').classList.add('show');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1500);
+        } else {
+          document.getElementById('formError').textContent = data.message || 'Signup failed';
+          document.getElementById('formError').classList.add('show');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('formError').textContent = 'Network error. Please try again.';
+        document.getElementById('formError').classList.add('show');
+      } finally {
+        document.getElementById('btnText').style.display = 'inline';
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('signupBtn').disabled = false;
+      }
+    });
+    
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  </script>
+</body>
+</html>

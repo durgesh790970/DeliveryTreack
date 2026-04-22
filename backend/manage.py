@@ -1,22 +1,11 @@
 #!/usr/bin/env python
-"""
-Convenience wrapper to run Django management commands from the project root.
-This script adds the backend folder to the Python path and then calls manage.py.
-"""
+"""Django's command-line utility for administrative tasks."""
 import os
 import sys
-import subprocess
 
-# Get the directory where this script is located
-project_root = os.path.dirname(os.path.abspath(__file__))
-backend_dir = os.path.join(project_root, 'backend')
 
-# Change to backend directory and run manage.py
-os.chdir(backend_dir)
-sys.path.insert(0, backend_dir)
-
-# Import and run Django's manage.py
-if __name__ == "__main__":
+def main():
+    """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "durgesh.settings")
     try:
         from django.core.management import execute_from_command_line
@@ -27,3 +16,7 @@ if __name__ == "__main__":
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()
